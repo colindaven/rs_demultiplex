@@ -3,17 +3,19 @@
 //Barcode must be supplied, currently in source code
 
 extern crate needletail;
-use needletail::{parse_fastx_file, Sequence, FastxReader};
+use std::env;
+//use needletail::{parse_fastx_file, Sequence, FastxReader};
+use needletail::{parse_fastx_file, Sequence};
+use needletail::parser::write_fastq;
 use std::str;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
+use std::collections::HashMap;
 
 fn read_barcodes () -> Vec<String> {
     
     // TODO - can replace this with file reading code (OR move to an arguments based model, parse and demultiplex only one oligomer at a time..... )
-
-    // The `vec!` macro can be used to initialize a vector or strings
     let barcodes = vec![
         "TCTCAAAG".to_string(),
         "AACTCCGC".into(),
@@ -46,6 +48,18 @@ fn read_barcodes () -> Vec<String> {
         return barcodes
 } 
 
+fn build_file_map(barcodes: &[String]) -> HashMap<String, File> {
+    let mut files = HashMap::new();
+
+    for barcode in barcodes {
+        let filename = Path::new(barcode).with_extension("txt");
+        let file = File::create(filename).expect("failed to create output file");
+        files.insert(barcode.clone(), file);
+    }
+
+    files
+}
+
 fn read_file(filename: &str){
 
         // Create a path to the desired file
@@ -71,7 +85,7 @@ fn read_file(filename: &str){
 fn write_file(filename: &str){
 
     // Create a path to the desired file
-    let path = Path::new("hello.txt");
+    let path = Path::new(filename);
     let display = path.display();
 
     // Open a file in write-only mode, returns `io::Result<File>`
@@ -81,12 +95,7 @@ fn write_file(filename: &str){
     };
 
     static LOREM_IPSUM: &str =
-    "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-    consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-    proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    "Lorem ipsum .
     ";
 
     // Write the `LOREM_IPSUM` string to `file`, returns `io::Result<()>`
@@ -97,42 +106,62 @@ fn write_file(filename: &str){
 
 }
 
+
 fn main() {
+
+    // Args TODO
+    /*
+    let args: Vec<_> = env::args().collect();
+    if args.len() != 3 {
+        println!("Usage: supply an input oligo {} and input file {} ", args[0], args[1] );
+        return;
+    }
+    */
+
     //let filename = "test5m.fastq";
-    //let filename = "test_big.fastq";
-    let filename = "Undetermined_S0_R1.fastq";
+    let filename = "test_big.fastq";
+    //let filename = "Undetermined_S0_R1.fastq";
     //let barcodes_filename = "barcodes.txt";
     println!("Fastq filename: {} ", filename);
     //println!("Barcodes filename: {} ", barcodes_filename);
 
     let barcodes_vector: Vec<String> = read_barcodes();
+    // create a file vector of same length of barcodes, for output
+    //let mut outfile_vector: Vec<File>;
+    let file_map = build_file_map(&barcodes_vector);
+
+
     let mut counts_vector: [i32; 30] = [0; 30];
-
-
     let mut n_bases = 0;
     let mut n_valid_kmers = 0;
     let mut reader = parse_fastx_file(&filename).expect("Not a valid path/file");
+
     while let Some(record) = reader.next() {
         let seqrec = record.expect("invalid record");
         
         // demultiplex 
-
         // get sequence
         let sequenceBytes = seqrec.normalize(false);
-        
         let sequenceText = str::from_utf8(&sequenceBytes).unwrap();
         //println!("Seq: {} ", &sequenceText);
 
-        // get first 8 chars (8chars x 2 bytes)
+        // get first 8 chars (8chars)
         let sequenceOligo = &sequenceText[0..8]; 
         //println!("barcode vector {}, seqOligo {} ", &barcodes_vector[0], sequenceOligo);
+
         if sequenceOligo == barcodes_vector[0]{
             //println!("Hit ! Barcode vector {}, seqOligo {} ", &barcodes_vector[0], sequenceOligo);
             counts_vector[0] =  counts_vector[0] + 1;
+            let file = file_map.get(&barcodes_vector[0] ).expect("barcode not in file map");
+            
+            let barcode = barcodes[0];
+            let file = file_map.get(&barcode).expect("barcode not in file map");
+            // write to file
+            //setup writer
+            write_fastq(seqrec.id(), &seqrec.seq(), seqrec.qual(), writer, LineEnding::Unix).expect("Failed to write record.");
 
         }  
 
-        /////// SETUP GIT REPO FOR THIS !
         /*
         match &sequenceOligo () {
             &barcodes_vector[0] => println!("0"),
@@ -144,29 +173,11 @@ fn main() {
 
         // keep track of the total number of bases
         n_bases += seqrec.num_bases();
-        if (n_bases % 10000000 == 0) {
+        //if (n_bases % 10000000 == 0) {
+        if n_bases % 1000000 == 0 {
             println!("Number of bases read: {} ", n_bases);
         } 
 
-        // normalize to make sure all the bases are consistently capitalized and
-        // that we remove the newlines since this is FASTA
-        let norm_seq = seqrec.normalize(false);
-        
-        // we make a reverse complemented copy of the sequence first for
-        // `canonical_kmers` to draw the complemented sequences from.
-        let rc = norm_seq.reverse_complement();
-
-
-        // now we keep track of the number of AAAAs (or TTTTs via
-        // canonicalization) in the file; note we also get the position (i.0;
-        // in the event there were `N`-containing kmers that were skipped)
-        // and whether the sequence was complemented (i.2) in addition to
-        // the canonical kmer (i.1)
-        for (_, kmer, _) in norm_seq.canonical_kmers(4, &rc) {
-            if kmer == b"AAAA" {
-                n_valid_kmers += 1;
-            }
-        }
     }
 
     // read, write files
