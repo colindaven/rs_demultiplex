@@ -14,7 +14,7 @@ cargo build --release -q  && cat test_big.fastq  | target/release/rs_demultiplex
 cargo run -q  && cat test_big.fastq  | target/debug/rs_demultiplex OLIGO > OLIGO.txt
 
 
-´´´
+```
 cargo build --release
 
 cat test_big.fastq  | target/debug/rs_demultiplex AACTCCGC > AACTCCGC.txt
@@ -125,5 +125,4 @@ cargo run -q  && cat test_big.fastq  | target/debug/rs_demultiplex TCGGCCGT > TC
 cargo run -q  && cat test_big.fastq  | target/debug/rs_demultiplex TCTCAAAG > TCTCAAAG.txt
 cargo run -q  && cat test_big.fastq  | target/debug/rs_demultiplex TGCGTCTG > TGCGTCTG.txt
 
-
-´´´
+```
