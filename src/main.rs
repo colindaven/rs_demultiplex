@@ -2,16 +2,16 @@
 //Demultiplex FASTQs by index in first 8 characters in the FASTQ sequence (barcode)
 //Barcode must be supplied, currently in source code
 
-extern crate needletail;
+extern crate bio;
 use std::env;
-//use needletail::{parse_fastx_file, Sequence, FastxReader};
-use needletail::{parse_fastx_file, Sequence};
-use needletail::parser::write_fastq;
 use std::str;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 use std::collections::HashMap;
+use std::io;
+use bio::io::fastq;
+use bio::io::fastq::FastqRead;
 
 fn read_barcodes () -> Vec<String> {
     
@@ -44,7 +44,7 @@ fn read_barcodes () -> Vec<String> {
         "TAGCTAGA".into(),
         "TAAACGCG".into()
         ];
-        println!("Initial vector: {:?}", barcodes);
+        //println!("Initial vector: {:?}", barcodes);
         return barcodes
 } 
 
@@ -82,50 +82,35 @@ fn read_file(filename: &str){
     // file auto closed when out of scope..    
 } 
 
-fn write_file(filename: &str){
-
-    // Create a path to the desired file
-    let path = Path::new(filename);
-    let display = path.display();
-
-    // Open a file in write-only mode, returns `io::Result<File>`
-    let mut file = match File::create(&path) {
-        Err(why) => panic!("couldn't create {}: {}", display, why),
-        Ok(file) => file,
-    };
-
-    static LOREM_IPSUM: &str =
-    "Lorem ipsum .
-    ";
-
-    // Write the `LOREM_IPSUM` string to `file`, returns `io::Result<()>`
-    match file.write_all(LOREM_IPSUM.as_bytes()) {
-        Err(why) => panic!("couldn't write to {}: {}", display, why),
-        Ok(_) => println!("successfully wrote to {}", display),
-    }
-
-}
-
-
 fn main() {
 
     // Args TODO
-    /*
+    
     let args: Vec<_> = env::args().collect();
-    if args.len() != 3 {
-        println!("Usage: supply an input oligo {} and input file {} ", args[0], args[1] );
+    if args.len() < 2 {
+        eprintln!("Usage: supply an input oligo");
         return;
     }
-    */
-
+    else if args.len() >= 2 {
+        eprintln!("Input oligo supplied {} ", args[1]);
+        // Note- no return here, proceed
+    }
+    
+    // Ignore, now using stdin
     //let filename = "test5m.fastq";
-    let filename = "test_big.fastq";
+    //let filename = "test_big.fastq";
+    //let filename = "test.fastq";
     //let filename = "Undetermined_S0_R1.fastq";
     //let barcodes_filename = "barcodes.txt";
-    println!("Fastq filename: {} ", filename);
+
+    //println!("Usage2: cargo run && cat test.fastq  | target/debug/rs_demultiplex");
+    //println!("Fastq filename: {} ", filename);
     //println!("Barcodes filename: {} ", barcodes_filename);
 
-    let barcodes_vector: Vec<String> = read_barcodes();
+    let barcode_from_args = &args[1];
+    //let barcodes_vector: Vec<String> = read_barcodes();
+
+    /*
     // create a file vector of same length of barcodes, for output
     //let mut outfile_vector: Vec<File>;
     let file_map = build_file_map(&barcodes_vector);
@@ -135,56 +120,61 @@ fn main() {
     let mut n_bases = 0;
     let mut n_valid_kmers = 0;
     let mut reader = parse_fastx_file(&filename).expect("Not a valid path/file");
+    */
 
-    while let Some(record) = reader.next() {
-        let seqrec = record.expect("invalid record");
+    let mut reader = fastq::Reader::new(io::stdin());
+    let mut writer = fastq::Writer::new(io::stdout());
+    let mut record = fastq::Record::new();
+    let mut n_bases = 0;
+    let mut line_counter = 0;
+    let mut counts_vector: [i32; 30] = [0; 30];
+    //let file_map = build_file_map(&barcodes_vector);
+
+    while let Ok(()) = reader.read(&mut record) {    
         
+        if record.is_empty() {
+            let check = record.check();
+            break;  
+        } 
+        
+
         // demultiplex 
-        // get sequence
-        let sequenceBytes = seqrec.normalize(false);
-        let sequenceText = str::from_utf8(&sequenceBytes).unwrap();
-        //println!("Seq: {} ", &sequenceText);
+        // get sequence, then first 8 characters. This is the barcode from the start of the read
+        let sequence = record.seq();
+        let sequence_text = str::from_utf8(sequence).unwrap();
+        //println!("seq:{}", sequence_text);     
+        let sequence_oligo = &sequence_text[0..8]; 
+        //println!("barcode args {}, sequence_oligo {} ", &barcode_from_args, sequence_oligo);
 
-        // get first 8 chars (8chars)
-        let sequenceOligo = &sequenceText[0..8]; 
-        //println!("barcode vector {}, seqOligo {} ", &barcodes_vector[0], sequenceOligo);
 
-        if sequenceOligo == barcodes_vector[0]{
-            //println!("Hit ! Barcode vector {}, seqOligo {} ", &barcodes_vector[0], sequenceOligo);
+        //if sequence_oligo == barcodes_vector[0]{
+        if sequence_oligo == barcode_from_args {
+
+            //println!("Hit ! Barcode  {}, seq_oligo from read {} ", &barcode_from_args, sequence_oligo);
             counts_vector[0] =  counts_vector[0] + 1;
+            /*
             let file = file_map.get(&barcodes_vector[0] ).expect("barcode not in file map");
-            
-            let barcode = barcodes[0];
+            let barcode = barcodes_vector[0].clone();
             let file = file_map.get(&barcode).expect("barcode not in file map");
-            // write to file
-            //setup writer
-            write_fastq(seqrec.id(), &seqrec.seq(), seqrec.qual(), writer, LineEnding::Unix).expect("Failed to write record.");
-
+            */
+            // write to stdout
+            writer.write_record(&record);
         }  
 
-        /*
-        match &sequenceOligo () {
-            &barcodes_vector[0] => println!("0"),
-            &barcodes_vector[1] => println!("1"),
-            &barcodes_vector[2] => println!("2"),
-            _ => println!("something else!"),
-        };
-        */
-
         // keep track of the total number of bases
-        n_bases += seqrec.num_bases();
-        //if (n_bases % 10000000 == 0) {
+        n_bases += record.seq().len();
         if n_bases % 1000000 == 0 {
-            println!("Number of bases read: {} ", n_bases);
+            //println!("Number of bases read: {} ", n_bases);
         } 
+    
+        line_counter = line_counter + 1;
+        //println!("Line count:{}", line_counter);     
+
 
     }
 
-    // read, write files
-    //read_file("bla.txt");
-    //write_file("out.txt");
 
-    println!("Counts {}", counts_vector[0]);
-    println!("There are {} bases in your file.", n_bases);
-    println!("There are {} AAAAs in your file.", n_valid_kmers);
+    //println!("Counts {}", counts_vector[0]);
+    //println!("There are {} bases in your file.", n_bases);
+
 }
