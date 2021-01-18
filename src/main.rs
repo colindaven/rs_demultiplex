@@ -52,35 +52,15 @@ fn build_file_map(barcodes: &[String]) -> HashMap<String, File> {
     let mut files = HashMap::new();
 
     for barcode in barcodes {
-        let filename = Path::new(barcode).with_extension("txt");
-        let file = File::create(filename).expect("failed to create output file");
-        files.insert(barcode.clone(), file);
+        //let filename = Path::new(barcode).with_extension("txt");
+        //let file = File::create(filename).expect("failed to create output file");
+        //files.insert(barcode.clone(), file);
     }
 
     files
 }
 
-fn read_file(filename: &str){
 
-        // Create a path to the desired file
-        let path = Path::new("horse.txt");
-        let display = path.display();
-    
-        // Open the path in read-only mode, returns `io::Result<File>`
-        let mut file = match File::open(&path) {
-            Err(why) => panic!("couldn't open {}: {}", display, why),
-            Ok(file) => file,
-        };
-    
-        // Read the file contents into a string, returns `io::Result<usize>`
-        let mut s = String::new();
-        match file.read_to_string(&mut s) {
-            Err(why) => panic!("couldn't read {}: {}", display, why),
-            Ok(_) => print!("{} File reading success, contains:\n{}", display, s),
-        }
-    
-    // file auto closed when out of scope..    
-} 
 
 fn main() {
 

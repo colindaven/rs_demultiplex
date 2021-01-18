@@ -2,9 +2,7 @@
 
 Usage: 
 
-1. replace oligo to be searched for in the src code
-
-2. run following
+1. Run one of following:
 
 cargo run -q  && cat test_big.fastq  | target/debug/rs_demultiplex  > out.fastq
 
@@ -69,6 +67,34 @@ cat test5m.fastq  | target/release/rs_demultiplex TCATTTCC > TCATTTCC.txt
 cat test5m.fastq  | target/release/rs_demultiplex TCGGCCGT > TCGGCCGT.txt
 cat test5m.fastq  | target/release/rs_demultiplex TCTCAAAG > TCTCAAAG.txt
 cat test5m.fastq  | target/release/rs_demultiplex TGCGTCTG > TGCGTCTG.txt
+
+# prod - built on hpc-rc09
+cat Undetermined_S0_R1.fastq  | target/debug/rs_demultiplex AACTCCGC > AACTCCGC.txt
+cat Undetermined_S0_R1.fastq  | target/debug/rs_demultiplex AAGCGGTG > AAGCGGTG.txt
+cat Undetermined_S0_R1.fastq  | target/debug/rs_demultiplex AATGTTCT > AATGTTCT.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex AGACTGAC > AGACTGAC.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex AGGACATT > AGGACATT.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex ATTAGACC > ATTAGACC.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex CAAAGTGT > CAAAGTGT.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex CACTTGAG > CACTTGAG.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex CCTCTCTT > CCTCTCTT.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex CTAGTAGC > CTAGTAGC.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex GACTGACA > GACTGACA.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex GCCAACCT > GCCAACCT.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex GCGGTGAA > GCGGTGAA.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex GCTCGTGC > GCTCGTGC.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex GGACATTA > GGACATTA.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex GTCCTTCG > GTCCTTCG.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex GTGTAAAC > GTGTAAAC.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex GTTACCGA > GTTACCGA.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex TAAACGCG > TAAACGCG.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex TAGCTAGA > TAGCTAGA.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex TATGGCAC > TATGGCAC.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex TCATTTCC > TCATTTCC.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex TCGGCCGT > TCGGCCGT.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex TCTCAAAG > TCTCAAAG.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex TGCGTCTG > TGCGTCTG.txt
+
 
 /mnt/ngsnfs/tools/dev/rs_demultiplex$ ls -lh *.txt
 -rw-rw-r-- 1 rcug rcug    0 Jan 18 16:27 AACTCCGC.txt
