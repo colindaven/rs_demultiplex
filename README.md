@@ -94,6 +94,7 @@ cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex TCATTTCC > TCATTTC
 cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex TCGGCCGT > TCGGCCGT.txt
 cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex TCTCAAAG > TCTCAAAG.txt
 cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex TGCGTCTG > TGCGTCTG.txt
+echo "done"
 
 
 /mnt/ngsnfs/tools/dev/rs_demultiplex$ ls -lh *.txt
