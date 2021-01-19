@@ -24,7 +24,6 @@ cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex AAGCGGTG > AAGCGGT
 cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex AATGTTCT > AATGTTCT.txt
 cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex AGACTGAC > AGACTGAC.txt
 cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex AGGACATT > AGGACATT.txt
-
 cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex CACTTGAG > CACTTGAG.txt
 cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex CCTCTCTT > CCTCTCTT.txt
 cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex CTAGTAGC > CTAGTAGC.txt
