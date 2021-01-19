@@ -16,10 +16,11 @@ use bio::io::fastq::FastqRead;
 fn read_barcodes () -> Vec<String> {
     
     // TODO - can replace this with file reading code (OR move to an arguments based model, parse and demultiplex only one oligomer at a time..... )
+    // THIS 
     let barcodes = vec![
         "TCTCAAAG".to_string(),
         "AACTCCGC".into(),
-        "CACTTGAG".into(),
+        "CACTTGAG".into(),  // THIS IS WRONG, old version, only 26 not 29 barcodes
         "TATGGCAC".into(),
         "CCTCTCTT".into(),
         "TCGGCCGT".into(),

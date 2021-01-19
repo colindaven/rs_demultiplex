@@ -1,11 +1,10 @@
 [package]
 name = "rs_demultiplex"
 version = "0.1.0"
-authors = ["Colin Davenport <davenport.colin@mh-hannover.de>"]
+authors = ["Colin Davenport <colindave@hotmail.com>"]
 edition = "2018"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-needletail = "0.4.0"
 bio = "*"
