@@ -1,15 +1,18 @@
 # rs_demultiplex
 
+Install - please first install Rust and Cargo from their website
+
 Usage: 
 
 1. Run one of following:
 
+```
 cargo run -q  && cat test_big.fastq  | target/debug/rs_demultiplex  > out.fastq
 
-or 
 cargo build --release -q  && cat test_big.fastq  | target/release/rs_demultiplex  > out.fastq
 
 cargo run -q  && cat test_big.fastq  | target/debug/rs_demultiplex OLIGO > OLIGO.txt
+```
 
 
 ```
