@@ -1,6 +1,8 @@
 //Rust FASTQ demultiplexer
 //Demultiplex FASTQs by index in first 8 characters in the FASTQ sequence (barcode)
-//Barcode must be supplied, currently in source code
+//Barcode must be supplied by arg
+//Usage - see Github README.md for examples.
+//Usage: cat Undetermined_S0_R1.fastq | target/release/rs_demultiplex AACTCCGC > AACTCCGC.txt
 
 extern crate bio;
 use std::env;
@@ -20,29 +22,8 @@ fn read_barcodes () -> Vec<String> {
     let barcodes = vec![
         "TCTCAAAG".to_string(),
         "AACTCCGC".into(),
-        "CACTTGAG".into(),  // THIS IS WRONG, old version, only 26 not 29 barcodes
+        "CACTTGAG".into(),  // THIS IS WRONG, keep as example only
         "TATGGCAC".into(),
-        "CCTCTCTT".into(),
-        "TCGGCCGT".into(),
-        "GGACATTA".into(),
-        "GTCCTTCG".into(),
-        "CAAAGTGT".into(),
-        "GTTACCGA".into(),
-        "TTGTGTGG".into(),
-        "AGGACATT".into(),
-        "TCATTTCC".into(),
-        "GCTCGTGC".into(),
-        "AATGTTCT".into(),
-        "GACTGACA".into(),
-        "GCCAACCT".into(),
-        "GTGTAAAC".into(),
-        "AAGCGGTG".into(),
-        "TGCGTCTG".into(),
-        "CTAGTAGC".into(),
-        "AGACTGAC".into(),
-        "GCGGTGAA".into(),
-        "ATTAGACC".into(),
-        "TAGCTAGA".into(),
         "TAAACGCG".into()
         ];
         //println!("Initial vector: {:?}", barcodes);
