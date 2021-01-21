@@ -77,17 +77,6 @@ fn main() {
         // Note- no return here, proceed
     }
     
-    // Ignore, now using stdin
-    //let filename = "test5m.fastq";
-    //let filename = "test_big.fastq";
-    //let filename = "test.fastq";
-    //let filename = "Undetermined_S0_R1.fastq";
-    //let barcodes_filename = "barcodes.txt";
-
-    //println!("Usage2: cargo run && cat test.fastq  | target/debug/rs_demultiplex");
-    //println!("Fastq filename: {} ", filename);
-    //println!("Barcodes filename: {} ", barcodes_filename);
-
     let barcode_from_args = &args[1];
     //let barcodes_vector: Vec<String> = read_barcodes();
 
@@ -123,22 +112,15 @@ fn main() {
         // get sequence, then first 8 characters. This is the barcode from the start of the read
         let sequence = record.seq();
         let sequence_text = str::from_utf8(sequence).unwrap();
-        //println!("seq:{}", sequence_text);     
         let sequence_oligo = &sequence_text[0..8]; 
         //println!("barcode args {}, sequence_oligo {} ", &barcode_from_args, sequence_oligo);
 
 
-        //if sequence_oligo == barcodes_vector[0]{
         if sequence_oligo == barcode_from_args {
 
             //println!("Hit ! Barcode  {}, seq_oligo from read {} ", &barcode_from_args, sequence_oligo);
             counts_vector[0] =  counts_vector[0] + 1;
-            /*
-            let file = file_map.get(&barcodes_vector[0] ).expect("barcode not in file map");
-            let barcode = barcodes_vector[0].clone();
-            let file = file_map.get(&barcode).expect("barcode not in file map");
-            */
-            // write to stdout
+	    //write to stdout
             writer.write_record(&record);
         }  
 
