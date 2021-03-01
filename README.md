@@ -1,10 +1,12 @@
 # rs_demultiplex
 
+Demultiplex reads in FASTQ format from a FASTQ input file according to an oligo in the first x bases (eg Unique Molecular Identifier, UMI).
+
 Install - please first install Rust and Cargo from their website
 
 Usage: 
 
-1. Run one of following:
+1. Run one of following for testing (after source code changes):
 
 ```
 cargo run -q  && cat test.fastq  | target/debug/rs_demultiplex  > out.fastq
