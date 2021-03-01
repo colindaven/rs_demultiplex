@@ -7,19 +7,22 @@ Usage:
 1. Run one of following:
 
 ```
-cargo run -q  && cat test_big.fastq  | target/debug/rs_demultiplex  > out.fastq
+cargo run -q  && cat test.fastq  | target/debug/rs_demultiplex  > out.fastq
 
-cargo build --release -q  && cat test_big.fastq  | target/release/rs_demultiplex  > out.fastq
+cargo build --release -q  && cat test.fastq  | target/release/rs_demultiplex  > out.fastq
 
-cargo run -q  && cat test_big.fastq  | target/debug/rs_demultiplex OLIGO > OLIGO.txt
+cargo run -q  && cat test.fastq  | target/debug/rs_demultiplex OLIGO > OLIGO.txt
 ```
 
 
 ```
+# 2. fast prod version - first build a release binary
 cargo build --release
 
-
-
+# 3. 
+# a. Now pipe in a FASTQ file into the release binary target/release/rs_demultiplex
+# b. specify an oligo barcode at the start of a read eg AACTCCGC  
+# c. reroute standard out output to a FASTQ file (eg AACTCCGC.txt)
 
 # suggested command lines with oligo/barcode supplied as first argument
 cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex AACTCCGC > AACTCCGC.txt
