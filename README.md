@@ -11,7 +11,7 @@ See examples below.
 
 ## Install
 
-1. Install from release (easy)
+#### 1. Install from release (easy)
  - download the release file for amd64 architectures
  - run: `chmod a+x rs_demultiplex`
  - Finally `rs_demultiplex`
