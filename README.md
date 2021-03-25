@@ -9,9 +9,16 @@ Demultiplex reads in FASTQ format from a FASTQ input file according to an oligo 
 
 See examples below.
 
-Install - please first install Rust and Cargo from their website
+## Install
 
-Usage: 
+1. Install from release (easy)
+ - download the release file for amd64 architectures
+ - run: `chmod a+x rs_demultiplex`
+ - Finally `rs_demultiplex`
+
+2. From source: Please first install Rust and Cargo from their website. The clone the repo and build as below.
+
+# Usage: 
 
 1. Run one of following for testing (after source code changes):
 
@@ -25,7 +32,7 @@ cargo run -q  && cat test.fastq  | target/debug/rs_demultiplex OLIGO > OLIGO.txt
 
 
 ```
-# 2. fast prod version - first build a release binary
+## 2. fast prod version - first build a release binary
 cargo build --release
 
 # 3. 
