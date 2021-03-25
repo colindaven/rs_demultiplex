@@ -39,10 +39,10 @@ cargo build --release
 ## Usage
 
 
-# 4. 
-# a. Now pipe in a FASTQ file into the release binary target/release/rs_demultiplex
-# b. specify an oligo barcode at the start of a read eg AACTCCGC  
-# c. reroute standard out output to a FASTQ file (eg AACTCCGC.txt)
+#### 4. 
+##### a. Now pipe in a FASTQ file into the release binary target/release/rs_demultiplex
+##### b. specify an oligo barcode at the start of a read eg AACTCCGC  
+##### c. reroute standard out output to a FASTQ file (eg AACTCCGC.txt)
 
 ```
 
