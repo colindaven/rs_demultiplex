@@ -8,12 +8,18 @@ extern crate bio;
 use std::env;
 use std::str;
 use std::fs::File;
-use std::io::prelude::*;
-use std::path::Path;
+//use std::io::prelude::*;
+//use std::path::Path;
 use std::collections::HashMap;
 use std::io;
 use bio::io::fastq;
 use bio::io::fastq::FastqRead;
+
+## Changelog
+//0.10 - now works for variable length oligos, was previously just 8bp oligos
+
+
+
 
 fn read_barcodes () -> Vec<String> {
     
@@ -31,7 +37,7 @@ fn read_barcodes () -> Vec<String> {
 } 
 
 fn build_file_map(barcodes: &[String]) -> HashMap<String, File> {
-    let mut files = HashMap::new();
+    let files = HashMap::new();
 
     for barcode in barcodes {
         //let filename = Path::new(barcode).with_extension("txt");
@@ -46,15 +52,17 @@ fn build_file_map(barcodes: &[String]) -> HashMap<String, File> {
 
 fn main() {
 
+
+    version=0.10
     // Args TODO
     
     let args: Vec<_> = env::args().collect();
     if args.len() < 2 {
-        eprintln!("Usage: supply an input oligo");
+        eprintln!("Version: 0.10. Usage: supply an input oligo, and remember to pipe in data. eg cat in.fastq | rs_demultiplex AGAGAGAG > AGAGAGAG.fastq");
         return;
     }
     else if args.len() >= 2 {
-        eprintln!("Input oligo supplied {} ", args[1]);
+        eprintln!(""Version: 0.10. Input oligo supplied {} ", args[1]);
         // Note- no return here, proceed
     }
     
@@ -90,10 +98,13 @@ fn main() {
         
 
         // demultiplex 
-        // get sequence, then first 8 characters. This is the barcode from the start of the read
+        // get sequence from fastq record, then first x characters. This is the barcode from the start of the read
         let sequence = record.seq();
         let sequence_text = str::from_utf8(sequence).unwrap();
-        let sequence_oligo = &sequence_text[0..8]; 
+
+        //let sequence_oligo = &sequence_text[0..8]; // only for 8bp matches! 
+        let barcode_from_args_length = barcode_from_args.len();
+        let sequence_oligo = &sequence_text[0..barcode_from_args_length]; 
         //println!("barcode args {}, sequence_oligo {} ", &barcode_from_args, sequence_oligo);
 
 
