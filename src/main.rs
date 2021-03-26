@@ -91,7 +91,7 @@ fn main() {
     let mut counts_vector: [i32; 30] = [0; 30];
     //let file_map = build_file_map(&barcodes_vector);
 
-    let debug = false;
+    let debug: bool = false;
 
     while let Ok(()) = reader.read(&mut record) {    
         
@@ -113,8 +113,9 @@ fn main() {
 
 
         if sequence_oligo == barcode_from_args {
-
-            //println!("Hit ! Barcode  {}, seq_oligo from read {} ", &barcode_from_args, sequence_oligo);
+            if debug {
+                println!("Hit ! Barcode  {}, seq_oligo from read {} ", &barcode_from_args, sequence_oligo);
+            }
             counts_vector[0] =  counts_vector[0] + 1;
 	        //write to stdout
             writer.write_record(&record);
@@ -123,7 +124,9 @@ fn main() {
         // keep track of the total number of bases
         n_bases += record.seq().len();
         if n_bases % 1000000 == 0 {
-            //println!("Number of bases read: {} ", n_bases);
+            if debug {
+                println!("Number of bases read: {} ", n_bases);
+            }
         } 
     
         line_counter = line_counter + 1;
@@ -132,8 +135,9 @@ fn main() {
 
     }
 
-
-    //println!("Counts {}", counts_vector[0]);
-    //println!("There are {} bases in your file.", n_bases);
+    if debug {
+        println!("Counts {}", counts_vector[0]);
+        println!("There are {} bases in your file.", n_bases);
+    }
 
 }
