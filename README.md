@@ -11,16 +11,18 @@ See examples below.
 
 ## Install
 
-1. Install from release (easy)
+#### 1. Install from release (easy)
  - download the release file for amd64 architectures
  - run: `chmod a+x rs_demultiplex`
  - Finally `rs_demultiplex`
 
-2. From source: Please first install Rust and Cargo from their website. The clone the repo and build as below.
 
-# Usage: 
 
-1. Run one of following for testing (after source code changes):
+## Install: build: 
+
+#### 1. From source: Please first install Rust and Cargo from their website. The clone the repo and build as below.
+
+#### 2. Run one of following for testing (after source code changes):
 
 ```
 cargo run -q  && cat test.fastq  | target/debug/rs_demultiplex  > out.fastq
@@ -30,15 +32,20 @@ cargo build --release -q  && cat test.fastq  | target/release/rs_demultiplex  > 
 cargo run -q  && cat test.fastq  | target/debug/rs_demultiplex OLIGO > OLIGO.txt
 ```
 
-
-```
-## 2. fast prod version - first build a release binary
+#### 3. fast prod version - first build a release binary
 cargo build --release
 
-# 3. 
-# a. Now pipe in a FASTQ file into the release binary target/release/rs_demultiplex
-# b. specify an oligo barcode at the start of a read eg AACTCCGC  
-# c. reroute standard out output to a FASTQ file (eg AACTCCGC.txt)
+
+## Usage
+
+
+#### 4. 
+##### a. Now pipe in a FASTQ file into the release binary target/release/rs_demultiplex
+##### b. specify an oligo barcode at the start of a read eg AACTCCGC  
+##### c. reroute standard out output to a FASTQ file (eg AACTCCGC.txt)
+
+```
+
 
 # suggested command lines with oligo/barcode supplied as first argument
 cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex AACTCCGC > AACTCCGC.txt
