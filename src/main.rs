@@ -15,7 +15,7 @@ use std::io;
 use bio::io::fastq;
 use bio::io::fastq::FastqRead;
 
-## Changelog
+// ## Changelog
 //0.10 - now works for variable length oligos, was previously just 8bp oligos
 
 
@@ -53,16 +53,16 @@ fn build_file_map(barcodes: &[String]) -> HashMap<String, File> {
 fn main() {
 
 
-    version=0.10
-    // Args TODO
-    
-    let args: Vec<_> = env::args().collect();
+    let version = "0.10";
+    // Args 
+
+    let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
         eprintln!("Version: 0.10. Usage: supply an input oligo, and remember to pipe in data. eg cat in.fastq | rs_demultiplex AGAGAGAG > AGAGAGAG.fastq");
         return;
     }
     else if args.len() >= 2 {
-        eprintln!(""Version: 0.10. Input oligo supplied {} ", args[1]);
+        eprintln!("Version: 0.10. Input oligo supplied {} ", args[1]);
         // Note- no return here, proceed
     }
     
@@ -81,6 +81,8 @@ fn main() {
     let mut reader = parse_fastx_file(&filename).expect("Not a valid path/file");
     */
 
+    // Setup FASTQ readers, writers and variables
+
     let mut reader = fastq::Reader::new(io::stdin());
     let mut writer = fastq::Writer::new(io::stdout());
     let mut record = fastq::Record::new();
@@ -88,6 +90,8 @@ fn main() {
     let mut line_counter = 0;
     let mut counts_vector: [i32; 30] = [0; 30];
     //let file_map = build_file_map(&barcodes_vector);
+
+    let debug = false;
 
     while let Ok(()) = reader.read(&mut record) {    
         
@@ -99,10 +103,10 @@ fn main() {
 
         // demultiplex 
         // get sequence from fastq record, then first x characters. This is the barcode from the start of the read
+
         let sequence = record.seq();
         let sequence_text = str::from_utf8(sequence).unwrap();
 
-        //let sequence_oligo = &sequence_text[0..8]; // only for 8bp matches! 
         let barcode_from_args_length = barcode_from_args.len();
         let sequence_oligo = &sequence_text[0..barcode_from_args_length]; 
         //println!("barcode args {}, sequence_oligo {} ", &barcode_from_args, sequence_oligo);
@@ -112,7 +116,7 @@ fn main() {
 
             //println!("Hit ! Barcode  {}, seq_oligo from read {} ", &barcode_from_args, sequence_oligo);
             counts_vector[0] =  counts_vector[0] + 1;
-	    //write to stdout
+	        //write to stdout
             writer.write_record(&record);
         }  
 
