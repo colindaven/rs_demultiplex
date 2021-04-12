@@ -20,7 +20,6 @@ use bio::io::fastq::FastqRead;
 
 
 
-
 fn read_barcodes () -> Vec<String> {
     
     // TODO - can replace this with file reading code (OR move to an arguments based model, parse and demultiplex only one oligomer at a time..... )
@@ -48,6 +47,21 @@ fn build_file_map(barcodes: &[String]) -> HashMap<String, File> {
     files
 }
 
+fn check_args ((local_args: &Vec<String>, version: &str), -> bool) {
+    let mut args_ok: bool = false;
+    if local_args.len() < 2 {
+        eprintln!("Version: {}. Usage: supply an input oligo, and remember to pipe in data. eg cat in.fastq | rs_demultiplex AGAGAGAG > AGAGAGAG.fastq", version);
+        &args_ok = false;
+        //return;
+        
+    }
+    else if local_args.len() >= 2 {
+        eprintln!("Version: {}. Input oligo supplied {} ", version, local_args[1]);
+        // Note- no return here, proceed
+        &args_ok = true;
+    }
+    return args_ok
+}
 
 
 fn main() {
@@ -55,15 +69,12 @@ fn main() {
 
     let version = "0.10";
     // Args 
-
     let args: Vec<String> = env::args().collect();
-    if args.len() < 2 {
-        eprintln!("Version: 0.10. Usage: supply an input oligo, and remember to pipe in data. eg cat in.fastq | rs_demultiplex AGAGAGAG > AGAGAGAG.fastq");
-        return;
-    }
-    else if args.len() >= 2 {
-        eprintln!("Version: 0.10. Input oligo supplied {} ", args[1]);
-        // Note- no return here, proceed
+    let mut args_ok: bool = false;
+    args_ok = check_args(&args, &version);
+    if !args_ok {
+        eprintln("Args not ok, exiting");
+        return
     }
     
     let barcode_from_args = &args[1];
@@ -91,16 +102,19 @@ fn main() {
     let mut counts_vector: [i32; 30] = [0; 30];
     //let file_map = build_file_map(&barcodes_vector);
 
+    //Warning - if you set debug to true, errors and warnings will be sent to stdout and fastq will not be format conform
     let debug: bool = false;
 
     while let Ok(()) = reader.read(&mut record) {    
         
         if record.is_empty() {
-            let check = record.check();
+            let _check = record.check();
+            if debug {
+                println!("Warning: Record empty {} ", record);
+            }
             break;  
         } 
         
-
         // demultiplex 
         // get sequence from fastq record, then first x characters. This is the barcode from the start of the read
 
@@ -110,7 +124,6 @@ fn main() {
         let barcode_from_args_length = barcode_from_args.len();
         let sequence_oligo = &sequence_text[0..barcode_from_args_length]; 
         //println!("barcode args {}, sequence_oligo {} ", &barcode_from_args, sequence_oligo);
-
 
         if sequence_oligo == barcode_from_args {
             if debug {
