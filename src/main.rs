@@ -96,7 +96,7 @@ fn main() {
     while let Ok(()) = reader.read(&mut record) {    
         
         if record.is_empty() {
-            let check = record.check();
+            let _check = record.check();
             break;  
         } 
         
@@ -116,7 +116,7 @@ fn main() {
             if debug {
                 println!("Hit ! Barcode  {}, seq_oligo from read {} ", &barcode_from_args, sequence_oligo);
             }
-            counts_vector[0] =  counts_vector[0] + 1;
+            counts_vector[0] += 1;
 	        //write to stdout
             writer.write_record(&record);
         }  
@@ -129,7 +129,7 @@ fn main() {
             }
         } 
     
-        line_counter = line_counter + 1;
+        line_counter += 1;
         //println!("Line count:{}", line_counter);     
 
 
