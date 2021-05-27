@@ -2,9 +2,9 @@
 
 Demultiplex reads in FASTQ format from a FASTQ input file according to an oligo in the first x bases (eg Unique Molecular Identifier, UMI).
 
- - accept oligo eg 8bp as first command line arg, see examples below
+ - accept oligo of length x, eg 8bp as first command line arg, see examples below
  - read FASTQ
- - match given oligo exactly to first 8bp of the read 
+ - match given oligo exactly to first x bp of the read 
  - write all reads - unmodified, i.e. still containing oligo - to standard out
 
 See examples below.
