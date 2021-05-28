@@ -4,7 +4,8 @@ Demultiplex reads in FASTQ format from a FASTQ input file according to an oligo 
 
  - accept oligo of length x, eg 8bp as first command line arg, see examples below
  - read FASTQ
- - match given oligo exactly to first x bp of the read 
+ - match given oligo exactly to first x bp, eg 8bp, of the read 
+
  - write all reads - unmodified, i.e. still containing oligo - to standard out
 
 See examples below.
@@ -33,7 +34,7 @@ cargo run -q  && cat test.fastq  | target/debug/rs_demultiplex OLIGO > OLIGO.txt
 ```
 
 #### 3. fast prod version - first build a release binary
-cargo build --release
+cargo
 
 
 ## Usage
