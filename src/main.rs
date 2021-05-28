@@ -5,6 +5,9 @@
 //Usage: cat Undetermined_S0_R1.fastq | target/release/rs_demultiplex AACTCCGC > AACTCCGC.txt
 
 extern crate bio;
+extern crate argparse;
+
+use argparse::{ArgumentParser, Store};
 use std::env;
 use std::str;
 use std::fs::File;
@@ -16,8 +19,13 @@ use bio::io::fastq;
 use bio::io::fastq::FastqRead;
 
 // ## Changelog
-//0.10 - now works for variable length oligos, was previously just 8bp oligos
+// 0.11 - add arg parsing basis
+// 0.10 - now works for variable length oligos, was previously just 8bp oligos
 
+fn version() ->  String {
+    let version: String = str::to_string("0.10");
+    version
+} 
 
 
 fn read_barcodes () -> Vec<String> {
@@ -53,6 +61,7 @@ fn check_args ((local_args: &Vec<String>, version: &str), -> bool) {
         eprintln!("Version: {}. Usage: supply an input oligo, and remember to pipe in data. eg cat in.fastq | rs_demultiplex AGAGAGAG > AGAGAGAG.fastq", version);
         &args_ok = false;
         //return;
+        //break/exit etc
         
     }
     else if local_args.len() >= 2 {
@@ -67,7 +76,23 @@ fn check_args ((local_args: &Vec<String>, version: &str), -> bool) {
 fn main() {
 
 
-    let version = "0.10";
+    println!("Version: ",version);
+
+    // TODO - replace with proper arg parser 
+
+    ////////////////
+    // Parse input arguments
+    /**
+    let mut input_file = "SampleSheet.csv".to_string();
+    {  // this block limits scope of borrows by parser.refer() method
+        let mut parser = ArgumentParser::new();
+        parser.refer(&mut input_file)
+            .add_option(&["-f", "--input_file"], Store,
+                    "Input file CSV");
+        parser.parse_args_or_exit();
+    } 
+    let mut input_csv: String = str::to_string(&input_file);
+    **/
     // Args 
     let args: Vec<String> = env::args().collect();
     let mut args_ok: bool = false;
