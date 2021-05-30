@@ -19,6 +19,7 @@ use bio::io::fastq;
 use bio::io::fastq::FastqRead;
 
 // ## Changelog
+// 0.13 - WIP - barcode removal
 // 0.12 - add arg parsing
 // 0.11 - add arg parsing basis
 // 0.10 - now works for variable length oligos, was previously just 8bp oligos
@@ -81,7 +82,7 @@ fn main() {
 
 
     //Warning - if you set debug to true, errors and warnings will be sent to stderr (previously stdout). Check FASTQ is conform!
-    let debug: bool = false;
+    let debug: bool = true;
     version();
 
 
@@ -114,7 +115,7 @@ fn main() {
 
     if debug {
         if remove_oligo {
-            eprintln!("Remove set");    
+            eprintln!("Remove parameter has been set");    
         }    
     }
     
@@ -149,6 +150,7 @@ fn main() {
     let mut reader = fastq::Reader::new(io::stdin());
     let mut writer = fastq::Writer::new(io::stdout());
     let mut record = fastq::Record::new();
+    let mut record_mod = fastq::Record::new();
     let mut n_bases = 0;
     let mut line_counter = 0;
     let mut counts_vector: [i32; 30] = [0; 30];
@@ -169,8 +171,8 @@ fn main() {
         // demultiplex 
         // get sequence from fastq record, then first x characters. This is the barcode from the start of the read
 
-        let sequence = record.seq();
-        let sequence_text = str::from_utf8(sequence).unwrap();
+        let mut sequence = record.seq();
+        let mut sequence_text = str::from_utf8(sequence).unwrap();
 
         let barcode_from_args_length = barcode_from_args.len();
         let sequence_oligo = &sequence_text[0..barcode_from_args_length]; 
@@ -181,8 +183,32 @@ fn main() {
                 eprintln!("Hit ! Barcode  {}, seq_oligo from read {} ", &barcode_from_args, sequence_oligo);
             }
             counts_vector[0] += 1;
-	        //write to stdout
-            writer.write_record(&record);
+            if remove_oligo {
+                // Modify the fastq record seq and qual lines to remove the oligo/barcode
+                record_mod = record.clone();
+                let mut sequence = record_mod.seq();
+                let mut sequence_text = str::from_utf8(sequence).unwrap();
+                let mut qual = record_mod.qual();
+                let mut qual_text = str::from_utf8(qual).unwrap();
+                // now modify the oligo and reassign to record_mod
+                sequence_text = &sequence_text[barcode_from_args_length..sequence_text.len()];
+                qual_text = &qual_text[barcode_from_args_length..qual_text.len()];
+
+                // private field error! Also need to convert to TextSlice and u8 respectively. 
+                // Maybe just write on stdout without fastq::writer (but performance!)?
+                //record_mod.seq = sequence_text.to_string();
+                //record_mod.seq = qual_text.to_string();
+
+                if debug {
+                    println!("Hit ! Barcode  {}, seq_oligo from read {}, seq  text oligo removed {}", &barcode_from_args, sequence_oligo, sequence_text);
+                    println!("Hit ! Barcode  {}, seq_oligo from read {}, qual text oligo removed {}", &barcode_from_args, sequence_oligo, qual_text);
+                }
+                writer.write_record(&record_mod);
+            }
+            else {
+	            //write to stdout without changing
+                writer.write_record(&record);
+            }
         }  
 
         // keep track of the total number of bases
