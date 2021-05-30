@@ -80,7 +80,7 @@ fn check_args (local_args: &Vec<String>, version: &str, -> bool) {
 fn main() {
 
 
-    //Warning - if you set debug to true, errors and warnings will be sent to stdout and fastq will not be format conform
+    //Warning - if you set debug to true, errors and warnings will be sent to stderr (previously stdout). Check FASTQ is conform!
     let debug: bool = false;
     version();
 
@@ -101,11 +101,11 @@ fn main() {
  
         parser.refer(&mut remove_oligo)
             .add_option(&["-r", "--remove"], StoreTrue,
-                    "Use to remove barcode sequence and quality from FASTQ file. Default: off");
+                    "Set this to remove barcode sequence and quality from FASTQ file. Default: off");
             
         parser.refer(&mut input_file)
             .add_option(&["-f", "--input_file"], Store,
-                    "Input file FASTQ");
+                    "Input file FASTQ (not functional, better to just cat the file in!");
         parser.parse_args_or_exit();
     } 
     let input_csv: String = str::to_string(&input_file);
@@ -130,7 +130,6 @@ fn main() {
     */
     
     let barcode_from_args = input_barcode;
-    //let barcode_from_args = &args[1];
     //let barcodes_vector: Vec<String> = read_barcodes();
 
     /*
@@ -175,7 +174,7 @@ fn main() {
 
         let barcode_from_args_length = barcode_from_args.len();
         let sequence_oligo = &sequence_text[0..barcode_from_args_length]; 
-        //println!("barcode args {}, sequence_oligo {} ", &barcode_from_args, sequence_oligo);
+        //eprintln!("barcode args {}, sequence_oligo {} ", &barcode_from_args, sequence_oligo);
 
         if sequence_oligo == barcode_from_args {
             if debug {
@@ -195,7 +194,7 @@ fn main() {
         } 
     
         line_counter += 1;
-        //println!("Line count:{}", line_counter);     
+        //eprintln!("Line count:{}", line_counter);     
 
 
     }
