@@ -7,7 +7,7 @@
 extern crate bio;
 extern crate argparse;
 
-use argparse::{ArgumentParser, Store};
+use argparse::{ArgumentParser, Store, StoreTrue};
 use std::env;
 use std::str;
 use std::fs::File;
@@ -19,11 +19,13 @@ use bio::io::fastq;
 use bio::io::fastq::FastqRead;
 
 // ## Changelog
+// 0.12 - add arg parsing
 // 0.11 - add arg parsing basis
 // 0.10 - now works for variable length oligos, was previously just 8bp oligos
 
 fn version() ->  String {
-    let version: String = str::to_string("0.10");
+    let version: String = str::to_string("0.12");
+    eprintln!("rs-demultiplex version: {}", &version);
     version
 } 
 
@@ -55,7 +57,8 @@ fn build_file_map(barcodes: &[String]) -> HashMap<String, File> {
     files
 }
 
-fn check_args ((local_args: &Vec<String>, version: &str), -> bool) {
+/**
+fn check_args (local_args: &Vec<String>, version: &str, -> bool) {
     let mut args_ok: bool = false;
     if local_args.len() < 2 {
         eprintln!("Version: {}. Usage: supply an input oligo, and remember to pipe in data. eg cat in.fastq | rs_demultiplex AGAGAGAG > AGAGAGAG.fastq", version);
@@ -71,29 +74,52 @@ fn check_args ((local_args: &Vec<String>, version: &str), -> bool) {
     }
     return args_ok
 }
+*/
 
 
 fn main() {
 
 
-    println!("Version: ",version);
+    //Warning - if you set debug to true, errors and warnings will be sent to stdout and fastq will not be format conform
+    let debug: bool = false;
+    version();
 
-    // TODO - replace with proper arg parser 
 
     ////////////////
     // Parse input arguments
-    /**
-    let mut input_file = "SampleSheet.csv".to_string();
+
+    let mut input_file = "test,fastq".to_string();
+    let mut input_oligo = "ATAT".to_string();
+    let mut remove_oligo = false;
+   
     {  // this block limits scope of borrows by parser.refer() method
         let mut parser = ArgumentParser::new();
+
+        parser.refer(&mut input_oligo)
+            .add_option(&["-b", "--barcode"], Store,
+            "Oligo barcode eg AGGATTCC to search for. Any length.");
+ 
+        parser.refer(&mut remove_oligo)
+            .add_option(&["-r", "--remove"], StoreTrue,
+                    "Use to remove barcode sequence and quality from FASTQ file. Default: off");
+            
         parser.refer(&mut input_file)
             .add_option(&["-f", "--input_file"], Store,
-                    "Input file CSV");
+                    "Input file FASTQ");
         parser.parse_args_or_exit();
     } 
-    let mut input_csv: String = str::to_string(&input_file);
-    **/
+    let input_csv: String = str::to_string(&input_file);
+    let input_barcode: String = str::to_string(&input_oligo);
+    let remove_oligo = remove_oligo;
+
+    if debug {
+        if remove_oligo {
+            eprintln!("Remove set");    
+        }    
+    }
+    
     // Args 
+    /*
     let args: Vec<String> = env::args().collect();
     let mut args_ok: bool = false;
     args_ok = check_args(&args, &version);
@@ -101,8 +127,10 @@ fn main() {
         eprintln("Args not ok, exiting");
         return
     }
+    */
     
-    let barcode_from_args = &args[1];
+    let barcode_from_args = input_barcode;
+    //let barcode_from_args = &args[1];
     //let barcodes_vector: Vec<String> = read_barcodes();
 
     /*
@@ -127,15 +155,13 @@ fn main() {
     let mut counts_vector: [i32; 30] = [0; 30];
     //let file_map = build_file_map(&barcodes_vector);
 
-    //Warning - if you set debug to true, errors and warnings will be sent to stdout and fastq will not be format conform
-    let debug: bool = false;
 
     while let Ok(()) = reader.read(&mut record) {    
         
         if record.is_empty() {
             let _check = record.check();
             if debug {
-                println!("Warning: Record empty {} ", record);
+                eprintln!("Warning: Record empty {} ", record);
             }
 
             break;  
@@ -153,7 +179,7 @@ fn main() {
 
         if sequence_oligo == barcode_from_args {
             if debug {
-                println!("Hit ! Barcode  {}, seq_oligo from read {} ", &barcode_from_args, sequence_oligo);
+                eprintln!("Hit ! Barcode  {}, seq_oligo from read {} ", &barcode_from_args, sequence_oligo);
             }
             counts_vector[0] += 1;
 	        //write to stdout
@@ -164,7 +190,7 @@ fn main() {
         n_bases += record.seq().len();
         if n_bases % 1000000 == 0 {
             if debug {
-                println!("Number of bases read: {} ", n_bases);
+                eprintln!("Number of bases read: {} ", n_bases);
             }
         } 
     
@@ -175,8 +201,8 @@ fn main() {
     }
 
     if debug {
-        println!("Counts {}", counts_vector[0]);
-        println!("There are {} bases in your file.", n_bases);
+        eprintln!("Counts {}", counts_vector[0]);
+        eprintln!("There are {} bases in your file.", n_bases);
     }
 
 }

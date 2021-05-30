@@ -3,7 +3,7 @@
 
 oligo="ATC"
 echo "running command for oligo $oligo"
-cargo run -q  && cat test.fastq  | target/debug/rs_demultiplex  $oligo > $oligo.txt
+cargo run -q  && cat test.fastq  | target/debug/rs_demultiplex  --barcode $oligo > $oligo.txt
 
 echo "produced this output - head"
 head -n 12 $oligo.txt
