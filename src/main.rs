@@ -8,14 +8,14 @@ extern crate bio;
 extern crate argparse;
 
 use argparse::{ArgumentParser, Store, StoreTrue};
-use std::env;
+//use std::env;
 use std::str;
 use std::fs::File;
 //use std::io::prelude::*;
 //use std::path::Path;
 use std::collections::HashMap;
 use std::io;
-use std::io::Write; 
+//use std::io::Write; 
 use bio::io::fastq;
 use bio::io::fastq::FastqRead;
 
