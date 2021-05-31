@@ -15,8 +15,10 @@ use std::fs::File;
 //use std::path::Path;
 use std::collections::HashMap;
 use std::io;
+use std::io::Write; 
 use bio::io::fastq;
 use bio::io::fastq::FastqRead;
+
 
 // ## Changelog
 // 0.13 - WIP - barcode removal
@@ -25,7 +27,7 @@ use bio::io::fastq::FastqRead;
 // 0.10 - now works for variable length oligos, was previously just 8bp oligos
 
 fn version() ->  String {
-    let version: String = str::to_string("0.12");
+    let version: String = str::to_string("0.13");
     eprintln!("rs-demultiplex version: {}", &version);
     version
 } 
@@ -89,7 +91,7 @@ fn main() {
     ////////////////
     // Parse input arguments
 
-    let mut input_file = "test,fastq".to_string();
+    //let mut input_file = "test.fastq".to_string();
     let mut input_oligo = "ATAT".to_string();
     let mut remove_oligo = false;
    
@@ -103,13 +105,14 @@ fn main() {
         parser.refer(&mut remove_oligo)
             .add_option(&["-r", "--remove"], StoreTrue,
                     "Set this to remove barcode sequence and quality from FASTQ file. Default: off");
-            
+        /*    
         parser.refer(&mut input_file)
             .add_option(&["-f", "--input_file"], Store,
                     "Input file FASTQ (not functional, better to just cat the file in!");
+        */
         parser.parse_args_or_exit();
     } 
-    let input_csv: String = str::to_string(&input_file);
+    //let input_csv: String = str::to_string(&input_file);
     let input_barcode: String = str::to_string(&input_oligo);
     let remove_oligo = remove_oligo;
 
@@ -150,7 +153,6 @@ fn main() {
     let mut reader = fastq::Reader::new(io::stdin());
     let mut writer = fastq::Writer::new(io::stdout());
     let mut record = fastq::Record::new();
-    let mut record_mod = fastq::Record::new();
     let mut n_bases = 0;
     let mut line_counter = 0;
     let mut counts_vector: [i32; 30] = [0; 30];
@@ -171,8 +173,8 @@ fn main() {
         // demultiplex 
         // get sequence from fastq record, then first x characters. This is the barcode from the start of the read
 
-        let mut sequence = record.seq();
-        let mut sequence_text = str::from_utf8(sequence).unwrap();
+        let sequence = record.seq();
+        let sequence_text = str::from_utf8(sequence).unwrap();
 
         let barcode_from_args_length = barcode_from_args.len();
         let sequence_oligo = &sequence_text[0..barcode_from_args_length]; 
@@ -185,25 +187,27 @@ fn main() {
             counts_vector[0] += 1;
             if remove_oligo {
                 // Modify the fastq record seq and qual lines to remove the oligo/barcode
-                //record_mod = record.clone();
-		let id = record.id();
-                let mut sequence = record.seq();
-                let mut sequence_text = str::from_utf8(sequence).unwrap();
-                let mut qual = record.qual();
-                let mut qual_text = str::from_utf8(qual).unwrap();
-                // now modify the oligo text and qual, convert 
-                sequence_text = &sequence_text[barcode_from_args_length..sequence_text.len()];
-                qual_text = &qual_text[barcode_from_args_length..qual_text.len()];
+		        let id = record.id();
+                let sequence = record.seq();
+                let qual = record.qual();
 
-		// TODO Convert to TextSlice and u8 respectively.
-               
+		        // TODO Convert to TextSlice and u8 respectively.
+               let trim_seq = &sequence[barcode_from_args_length..sequence.len()];
+               let trim_qual = &qual[barcode_from_args_length..qual.len()];
                 
                 if debug {
+                    let mut sequence_text = str::from_utf8(sequence).unwrap();
+                    let mut qual_text = str::from_utf8(qual).unwrap();
+                    // now modify the oligo text and qual, convert 
+                    sequence_text = &sequence_text[barcode_from_args_length..sequence_text.len()];
+                    qual_text = &qual_text[barcode_from_args_length..qual_text.len()];
                     println!("Hit ! Barcode  {}, seq_oligo from read {}, seq  text oligo removed {}", &barcode_from_args, sequence_oligo, sequence_text);
                     println!("Hit ! Barcode  {}, seq_oligo from read {}, qual text oligo removed {}", &barcode_from_args, sequence_oligo, qual_text);
+                    println!("sequence length: {}, qual length {}", sequence.len(), qual.len());
+                    println!("trim_seq length: {}, trim_qual length {}", trim_seq.len(), trim_qual.len());
                 }
-		// Do not create a new record object - performance. Just write.     
-		write_fmt!(writer, "@{}\n{}\n+\n{}\n", id, trim_seq, trim_qual);
+		        // Do not create a new record object - performance. Just write.     
+		        //write_fmt!(writer, "@{}\n{}\n+\n{}\n", id, trim_seq, trim_qual);
                 //writer.write_record(&record_mod);
             }
             else {
