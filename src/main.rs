@@ -185,25 +185,26 @@ fn main() {
             counts_vector[0] += 1;
             if remove_oligo {
                 // Modify the fastq record seq and qual lines to remove the oligo/barcode
-                record_mod = record.clone();
-                let mut sequence = record_mod.seq();
+                //record_mod = record.clone();
+		let id = record.id();
+                let mut sequence = record.seq();
                 let mut sequence_text = str::from_utf8(sequence).unwrap();
-                let mut qual = record_mod.qual();
+                let mut qual = record.qual();
                 let mut qual_text = str::from_utf8(qual).unwrap();
-                // now modify the oligo and reassign to record_mod
+                // now modify the oligo text and qual, convert 
                 sequence_text = &sequence_text[barcode_from_args_length..sequence_text.len()];
                 qual_text = &qual_text[barcode_from_args_length..qual_text.len()];
 
-                // private field error! Also need to convert to TextSlice and u8 respectively. 
-                // Maybe just write on stdout without fastq::writer (but performance!)?
-                //record_mod.seq = sequence_text.to_string();
-                //record_mod.seq = qual_text.to_string();
-
+		// TODO Convert to TextSlice and u8 respectively.
+               
+                
                 if debug {
                     println!("Hit ! Barcode  {}, seq_oligo from read {}, seq  text oligo removed {}", &barcode_from_args, sequence_oligo, sequence_text);
                     println!("Hit ! Barcode  {}, seq_oligo from read {}, qual text oligo removed {}", &barcode_from_args, sequence_oligo, qual_text);
                 }
-                writer.write_record(&record_mod);
+		// Do not create a new record object - performance. Just write.     
+		write_fmt!(writer, "@{}\n{}\n+\n{}\n", id, trim_seq, trim_qual);
+                //writer.write_record(&record_mod);
             }
             else {
 	            //write to stdout without changing
