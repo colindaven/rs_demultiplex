@@ -21,14 +21,15 @@ use bio::io::fastq::FastqRead;
 
 
 // ## Changelog
-// 0.13 - WIP - barcode removal
+// 0.14 - added bigger test script and debug parameters
+// 0.13 - barcode removal
 // 0.12 - add arg parsing
 // 0.11 - add arg parsing basis
 // 0.10 - now works for variable length oligos, was previously just 8bp oligos
 
 fn version() ->  String {
     let version: String = str::to_string("0.13");
-    eprintln!("rs-demultiplex version: {}", &version);
+    eprintln!("rs-demultiplex version: {}. Reads input from std in, eg cat x.fastq | rs_demultiplex --barcode AGAG --remove > barcode.fastq ", &version);
     version
 } 
 
@@ -84,7 +85,7 @@ fn main() {
 
 
     //Warning - if you set debug to true, errors and warnings will be sent to stderr (previously stdout). Check FASTQ is conform!
-    let debug: bool = true;
+    let debug: bool = false;
     version();
 
 
