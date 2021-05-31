@@ -86,8 +86,10 @@ fn main() {
 
     //Warning - if you set debug to true, errors and warnings will be sent to stderr (previously stdout). Check FASTQ is conform!
     let debug: bool = false;
-    version();
 
+    if debug{
+        version();
+    } 
 
     ////////////////
     // Parse input arguments
@@ -122,17 +124,6 @@ fn main() {
             eprintln!("Remove parameter has been set");    
         }    
     }
-    
-    // Args 
-    /*
-    let args: Vec<String> = env::args().collect();
-    let mut args_ok: bool = false;
-    args_ok = check_args(&args, &version);
-    if !args_ok {
-        eprintln("Args not ok, exiting");
-        return
-    }
-    */
     
     let barcode_from_args = input_barcode;
     //let barcodes_vector: Vec<String> = read_barcodes();
