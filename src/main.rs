@@ -195,7 +195,8 @@ fn main() {
 		        // TODO Convert to TextSlice and u8 respectively.
                let trim_seq = &sequence[barcode_from_args_length..sequence.len()];
                let trim_qual = &qual[barcode_from_args_length..qual.len()];
-                
+               let record_trimmed = fastq::Record::with_attrs(id, record.desc(), trim_seq, trim_qual);
+
                 if debug {
                     let mut sequence_text = str::from_utf8(sequence).unwrap();
                     let mut qual_text = str::from_utf8(qual).unwrap();
@@ -207,9 +208,10 @@ fn main() {
                     println!("sequence length: {}, qual length {}", sequence.len(), qual.len());
                     println!("trim_seq length: {}, trim_qual length {}", trim_seq.len(), trim_qual.len());
                 }
-		        // Do not create a new record object - performance. Just write.     
+		        // Do not create a new record object - performance. Just write.   write_fmt failed though.   
 		        //write_fmt!(writer, "@{}\n{}\n+\n{}\n", id, trim_seq, trim_qual);
-                //writer.write_record(&record_mod);
+                writer.write_record(&record_trimmed);     
+
             }
             else {
 	            //write to stdout without changing
