@@ -6,7 +6,8 @@ Demultiplex reads in FASTQ format from a FASTQ input file according to an oligo 
  - read FASTQ
  - match given oligo exactly to first x bp, eg 8bp, of the read 
 
- - write all reads - unmodified, i.e. still containing oligo - to standard out
+ - write all reads - either default unmodified, i.e. still containing oligo - to standard out
+ - alternatively, use --remove to trim off the oligo from the read and shorten the fastq qual line too.
 
 See examples below.
 
