@@ -38,6 +38,7 @@ cargo build --release
 
 
 ## Usage
+```
 --
 target/release/rs_demultiplex -h
 Usage:
@@ -49,6 +50,7 @@ Optional arguments:
   -b,--barcode BARCODE  Oligo barcode eg AGGATTCC to search for. Any length.
   -r,--remove           Set this to remove barcode sequence and quality from
                         FASTQ file. Default: off
+```
 
 #### 4. 
 ##### a. Now pipe in a FASTQ file into the release binary target/release/rs_demultiplex
