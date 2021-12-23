@@ -6,7 +6,8 @@ Demultiplex reads in FASTQ format from a FASTQ input file according to an oligo 
  - read FASTQ
  - match given oligo exactly to first x bp, eg 8bp, of the read 
 
- - write all reads - unmodified, i.e. still containing oligo - to standard out
+ - write all reads - either default unmodified, i.e. still containing oligo - to standard out
+ - alternatively, use --remove to trim off the oligo from the read and shorten the fastq qual line too.
 
 See examples below.
 
@@ -36,6 +37,14 @@ cat test.fastq  | target/release/rs_demultiplex --remove --barcode ATGC > ATGC.t
 cargo build --release
 
 
+#### 4. run on a whole list of barcodes
+
+First populate barcodes.txt with one raw barcode per line (not fasta, raw format). 
+Leave a blank line at the end, else the last barcode might be missed.
+
+```
+bash demux_all.sh
+```
 
 ## Usage
 ```
