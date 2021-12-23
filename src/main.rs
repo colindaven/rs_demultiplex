@@ -21,6 +21,7 @@ use bio::io::fastq::FastqRead;
 
 
 // ## Changelog
+// 0.15 - add bash script for reading barcode lists
 // 0.14 - added bigger test script and debug parameters
 // 0.13 - barcode removal
 // 0.12 - add arg parsing
@@ -28,7 +29,7 @@ use bio::io::fastq::FastqRead;
 // 0.10 - now works for variable length oligos, was previously just 8bp oligos
 
 fn version() ->  String {
-    let version: String = str::to_string("0.13");
+    let version: String = str::to_string("0.15");
     eprintln!("rs-demultiplex version: {}. Reads input from std in, eg cat x.fastq | rs_demultiplex --barcode AGAG --remove > barcode.fastq ", &version);
     version
 } 

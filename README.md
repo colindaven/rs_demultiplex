@@ -37,6 +37,14 @@ cat test.fastq  | target/release/rs_demultiplex --remove --barcode ATGC > ATGC.t
 cargo build --release
 
 
+#### 4. run on a whole list of barcodes
+
+First populate barcodes.txt with one raw barcode per line (not fasta, raw format). 
+Leave a blank line at the end, else the last barcode might be missed.
+
+```
+bash demux_all.sh
+```
 
 ## Usage
 ```
