@@ -46,6 +46,22 @@ Leave a blank line at the end, else the last barcode might be missed.
 bash demux_all.sh
 ```
 
+#### 5. Or avoid the bash script, and run things manually 
+##### 5a. Now pipe in a FASTQ file into the release binary target/release/rs_demultiplex
+##### 5b. specify an oligo barcode at the start of a read eg AACTCCGC  
+##### 5c. reroute standard out output to a FASTQ file (eg AACTCCGC.txt)
+
+```
+
+
+# suggested command lines with oligo/barcode supplied as first argument
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex --remove --barcode AACTCCGC > AACTCCGC.txt
+cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex --remove --barcode AAGCGGTG > AAGCGGTG.txt
+
+
+```
+
+
 ## Usage
 ```
 --
@@ -61,17 +77,3 @@ Optional arguments:
                         FASTQ file. Default: off
 ```
 
-#### 4. 
-##### a. Now pipe in a FASTQ file into the release binary target/release/rs_demultiplex
-##### b. specify an oligo barcode at the start of a read eg AACTCCGC  
-##### c. reroute standard out output to a FASTQ file (eg AACTCCGC.txt)
-
-```
-
-
-# suggested command lines with oligo/barcode supplied as first argument
-cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex --remove --barcode AACTCCGC > AACTCCGC.txt
-cat Undetermined_S0_R1.fastq  | target/release/rs_demultiplex --remove --barcode AAGCGGTG > AAGCGGTG.txt
-
-
-```
