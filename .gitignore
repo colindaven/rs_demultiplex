@@ -1,0 +1,6 @@
+target/
+target/debug/
+tests/output/
+
+*.fastq
+*.fastq.gz
