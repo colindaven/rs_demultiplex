@@ -62,18 +62,21 @@ export PATH="$PATH:$(pwd)/target/release"
 ## Quick Start
 
 ### Basic Usage: Single Barcode
+
 ```bash
 cat data.fastq | ./target/release/rs_demultiplex -b AATGTTCT
 ```
 
-This will output matched reads to `AATGTTCT.fastq`.
+This writes matched reads to `AATGTTCT.fastq` and unmatched reads to `undetermined.fastq`.
 
 ### Multiple Barcodes from a File
+
 ```bash
 zcat data.fastq.gz | ./target/release/rs_demultiplex -l barcodes.txt -r -z
 ```
 
 This will:
+
 - Read gzipped FASTQ from stdin
 - Match against barcodes in `barcodes.txt`
 - **Remove** barcode sequences from output (`-r`)
@@ -87,7 +90,7 @@ This will:
 
 ### Command-line Arguments
 
-```
+```text
 rs_demultiplex [OPTIONS]
 ```
 
@@ -154,25 +157,29 @@ done
 
 ## Helper Scripts
 
-Two helper scripts are provided in the `src/` directory to automate common tasks:
+Two helper scripts are provided in the repository root to automate common tasks:
 
 ### 1. `test_debug.sh` - Development/Testing
+
 Designed for rapid testing during development.
-- **Action**: Rebuilds the project in `debug` mode and runs a test against a single barcode.
+
+- **Action**: Rebuilds the project in debug mode and runs a test against a single barcode.
 - **Data**: Uses the included `tests/test.fastq`.
 - **Usage**:
   ```bash
-  ./src/test_debug.sh
+  ./test_debug.sh
   ```
 
 ### 2. `run_demultiplex.sh` - Production Processing
+
 Used for processing real datasets with multiple barcodes.
-- **Action**: Rebuilds the project in `--release` mode for maximum performance.
-- **Arguments**: Takes path to input FASTQ and path to barcode list as arguments.
-- **Logic**: Runs demultiplexing with the `--remove` flag enabled to trim barcodes.
+
+- **Action**: Rebuilds the project in release mode for maximum performance.
+- **Arguments**: Takes the input FASTQ path and the barcode list path as arguments.
+- **Logic**: Runs demultiplexing with `--remove` enabled to trim barcodes.
 - **Usage**:
   ```bash
-  ./src/run_demultiplex.sh input.fastq barcodes.txt
+  ./run_demultiplex.sh input.fastq barcodes.txt
   ```
 
 ---
@@ -340,7 +347,7 @@ cargo clippy         # Lint code
 
 If you use `rs_demultiplex` in your research, please cite this repository:
 
-```
+```bibtex
 @software{rs_demultiplex,
   author = {Colin Daven},
   title = {rs_demultiplex: High-Performance FASTQ Demultiplexer},
